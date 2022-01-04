@@ -5,10 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-    </script>
 </head>
 <body>
     <h1>Chat App</h1>
@@ -16,9 +12,34 @@
 
     </ul>
 
-    <form action="submit">
-        <input type="text" id="input">
-        <button id="send">Send</button>
+    <form action="" id="form">
+        <input type="text" id="name" required>
+        <input type="text" id="message" required>
+        <button id="send" type="submit">Send</button>
     </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        let messages = document.querySelector('#messages');
+        let form = document.querySelector('#form');
+        let msg = document.querySelector('#message');
+        let name1 = document.querySelector('#name');
+
+        form.addEventListener('submit', (event)=>{
+            event.preventDefault();
+            if(msg.value && name1.value){
+                socket.emit('chat message', {name: name1.value, message: msg.value});
+                msg.value='';
+            }
+        })
+
+        socket.on('chat message', function(msg){
+            let chatMessage = document.createElement('li');
+            chatMessage.innerText = msg;
+            messages.appendChild(chatMessage);
+        })
+    </script>
 </body>
 </html>

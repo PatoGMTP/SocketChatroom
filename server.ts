@@ -1,4 +1,6 @@
-// const app = require('express')();
+
+// import * as 
+
 import * as test from 'express'
 let app = test();
 
@@ -11,6 +13,8 @@ const sock = new Server();
 
 sock.attach(http);
 
+const port = process.env.PORT || 3000;
+
 let messages: string[] = [];
 
 app.get('/', (req, res) => {
@@ -20,7 +24,7 @@ app.get('/', (req, res) => {
 
 sock.on('connection', (socket) => {
     messages.forEach(element => {
-        sock.emit('my broadcast', `server: ${element}`);
+        sock.emit('chat message', `${element}`);
     });
 
     console.log('a user connected');
@@ -29,24 +33,19 @@ sock.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    socket.on('my message', (msg) => {
+    socket.on('chat message', obj => {
+        console.log(obj);
+        let msg = obj.message
+        let time = new Date();
         let message = '';
         message += "From: " + socket.conn.remoteAddress + " ; "
         message += "To: " + socket.handshake.headers.host + " ; "
         message += msg;
         messages.push(message);
-        sock.emit('my broadcast', `${message}`);
-        sock.to("Room1").emit("my broadcast", "Welcome to Room1");
-        console.log(sock.sockets.sockets);
-        console.log(socket.rooms);
-        socket.join("Room1");
-        console.log(socket.rooms);
-        // console.log("test");
-        // console.log(socket.conn.remoteAddress)
-        // console.log(socket.handshake.address)
+        sock.emit('chat message', `${message}`);
     });
 });
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+http.listen(port, () => {
+  console.log(`listening on http://localhost:${port}`);
 });
