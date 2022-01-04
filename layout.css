@@ -1,13 +1,15 @@
 body, html
 {
-    height: 100%;
+    /* height: 100%; */
 }
 
 body
 {
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 500px auto;
     justify-content: center;
+
+    padding: 20px;
 }
 
 body > *
@@ -33,5 +35,24 @@ header
 ul
 {
     list-style: none;
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+}
 
+li
+{
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+li:nth-child(even)
+{
+    background-color: rgb(255, 248, 255);
+}
+
+li:nth-child(odd)
+{
+    background-color: rgb(255, 254, 248);
 }
