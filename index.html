@@ -13,10 +13,22 @@
     </ul>
 
     <form action="" id="form">
+        <label for="preview">Preview:</label>
+        <!-- <p id="preview"></p> -->
         <input type="text" id="name" required>
         <input type="text" id="message" required>
         <button id="send" type="submit">Send</button>
     </form>
+
+    <button id="emojis">Emojis</button>
+    
+    <div class="keyboard" hidden>
+        <button id="lion"><span>&#129409;</span></button>
+        <button id="grinning face"><span>&#128512;</span></button>
+        <button id="tears of joy"><span>&#128514;</span></button>
+        <button id="smiling face"><span>&#128522;</span></button>
+        <button id="sunglasses"><span>&#128526;</span></button>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -24,20 +36,51 @@
 
         let messages = document.querySelector('#messages');
         let form = document.querySelector('#form');
+        // let preview = document.querySelector('#preview');
         let msg = document.querySelector('#message');
         let name1 = document.querySelector('#name');
+
+        let keyboard = document.querySelector(".keyboard");
+
+        let emojis_button = document.querySelector("#emojis");
+
+        emojis_button.addEventListener("click", evt => {
+            keyboard.hidden = !keyboard.hidden;
+        });
+
+        let arr = [].slice.call(keyboard.children);
+
+        arr.forEach(btn => {
+            btn.addEventListener("click", evt => {
+            msg.value += btn.children[0].innerHTML;
+        });
+        })
+
+        // let lion_emoji = document.querySelector('#lion');
+
+        // lion_emoji.addEventListener("click", evt => {
+        //     console.log(evt, msg.innerHTML, lion_emoji.children[0].innerHTML, lion_emoji.children[0].innerText);
+        //     msg.value += lion_emoji.children[0].innerHTML;
+        // });
 
         form.addEventListener('submit', (event)=>{
             event.preventDefault();
             if(msg.value && name1.value){
                 socket.emit('chat message', {name: name1.value, message: msg.value});
                 msg.value='';
+                // preview.innerHTML = "";
             }
         })
 
-        socket.on('chat message', function(msg){
+        // msg.addEventListener("change", evt => {
+        //     preview.innerHTML = msg.value;
+        // });
+
+        socket.on('chat message', msg => {
             let chatMessage = document.createElement('li');
-            chatMessage.innerText = msg;
+            let span = document.createElement("span");
+            span.innerHTML = msg;
+            chatMessage.appendChild(span);
             messages.appendChild(chatMessage);
         })
     </script>

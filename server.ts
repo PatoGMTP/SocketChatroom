@@ -17,6 +17,8 @@ const port = process.env.PORT || 3000;
 
 let messages: string[] = [];
 
+let users = {};
+
 app.get('/', (req, res) => {
 //   res.send('<h1>Hey Socket.io</h1>');
   res.sendFile(__dirname + "/index.html");
@@ -35,11 +37,13 @@ sock.on('connection', (socket) => {
 
     socket.on('chat message', obj => {
         console.log(obj);
-        let msg = obj.message
-        let time = new Date();
+        users[socket.conn.remoteAddress] = obj.name;
+        let msg = obj.message;
+        let time = new Date().toLocaleString();
         let message = '';
-        message += "From: " + socket.conn.remoteAddress + " ; "
-        message += "To: " + socket.handshake.headers.host + " ; "
+        message += "Time: " + time + " ; ";
+        message += "From: " + users[socket.conn.remoteAddress] + " ; ";
+        // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
         messages.push(message);
         sock.emit('chat message', `${message}`);

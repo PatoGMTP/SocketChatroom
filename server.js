@@ -10,6 +10,7 @@ var sock = new socket_io_1.Server();
 sock.attach(http);
 var port = process.env.PORT || 3000;
 var messages = [];
+var users = {};
 app.get('/', function (req, res) {
     //   res.send('<h1>Hey Socket.io</h1>');
     res.sendFile(__dirname + "/index.html");
@@ -24,11 +25,13 @@ sock.on('connection', function (socket) {
     });
     socket.on('chat message', function (obj) {
         console.log(obj);
+        users[socket.conn.remoteAddress] = obj.name;
         var msg = obj.message;
-        var time = new Date();
+        var time = new Date().toLocaleString();
         var message = '';
-        message += "From: " + socket.conn.remoteAddress + " ; ";
-        message += "To: " + socket.handshake.headers.host + " ; ";
+        message += "Time: " + time + " ; ";
+        message += "From: " + users[socket.conn.remoteAddress] + " ; ";
+        // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
         messages.push(message);
         sock.emit('chat message', "".concat(message));
