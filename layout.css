@@ -5,6 +5,33 @@ body, html
 
 body
 {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    justify-content: center;
+}
+
+body > *
+{
+    max-width: 1000px;
+}
+
+header
+{
     display: flex;
-    flex-flow: column;
+    flex-flow: row;
+    gap: 50px; 
+}
+
+.room_buttons
+{
+    display: flex;
+    flex-flow: row;
+    gap: 20px;
+    align-items: center;
+}
+
+ul
+{
+    list-style: none;
+
 }
