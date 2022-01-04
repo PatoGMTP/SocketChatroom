@@ -46,7 +46,8 @@ sock.on('connection', (socket) => {
         // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
         messages.push(message);
-        sock.emit('chat message', `${message}`);
+
+        sock.emit('chat message', {content: message, from: users[socket.conn.remoteAddress]});
     });
 });
 

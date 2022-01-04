@@ -8,6 +8,11 @@
 </head>
 <body>
     <h1>Chat App</h1>
+
+    <div class="room_buttons">
+
+    </div>
+
     <ul id="messages">
 
     </ul>
@@ -41,6 +46,8 @@
         let name1 = document.querySelector('#name');
 
         let keyboard = document.querySelector(".keyboard");
+
+        let room_buttons = document.querySelector(".room_buttons");
 
         let emojis_button = document.querySelector("#emojis");
 
@@ -76,12 +83,37 @@
         //     preview.innerHTML = msg.value;
         // });
 
+        let rooms = {}
+
+        rooms.global = []
+
+        rooms.test = [];
+
+        Object.keys(rooms).forEach(item => {
+            let btn = document.createElement("button");
+            btn.innerText = item;
+            room_buttons.appendChild(btn);
+        });
+
         socket.on('chat message', msg => {
             let chatMessage = document.createElement('li');
+
+            chatMessage.addEventListener("dblclick", evt => {
+                if (!rooms[msg.from])
+                {
+                    rooms[msg.from] = [];
+                    let btn = document.createElement("button");
+                    btn.innerText = msg.from;
+                    room_buttons.appendChild(btn);
+                }
+            });
+
             let span = document.createElement("span");
-            span.innerHTML = msg;
+            span.innerHTML = msg.content;
             chatMessage.appendChild(span);
             messages.appendChild(chatMessage);
+
+            rooms.global.push(chatMessage);
         })
     </script>
 </body>

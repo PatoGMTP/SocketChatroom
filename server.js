@@ -34,7 +34,7 @@ sock.on('connection', function (socket) {
         // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
         messages.push(message);
-        sock.emit('chat message', "".concat(message));
+        sock.emit('chat message', { content: message, from: users[socket.conn.remoteAddress] });
     });
 });
 http.listen(port, function () {
