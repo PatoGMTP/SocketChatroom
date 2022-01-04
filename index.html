@@ -19,6 +19,7 @@
 
     <form action="" id="form">
         <label for="preview">Preview:</label>
+        <!-- <p id="preview"></p> -->
         <input type="text" id="name" required>
         <input type="text" id="message" required>
         <button id="send" type="submit">Send</button>
@@ -38,106 +39,82 @@
     <script>
         const socket = io();
 
-        // let in_global = true;
-        let current_room = "global";
-        let user = "";
-
         let messages = document.querySelector('#messages');
         let form = document.querySelector('#form');
+        // let preview = document.querySelector('#preview');
         let msg = document.querySelector('#message');
         let name1 = document.querySelector('#name');
 
-        // Prepare Emoji Keyboard
+        let keyboard = document.querySelector(".keyboard");
+
+        let room_buttons = document.querySelector(".room_buttons");
 
         let emojis_button = document.querySelector("#emojis");
+
         emojis_button.addEventListener("click", evt => {
             keyboard.hidden = !keyboard.hidden;
         });
 
-        let keyboard = document.querySelector(".keyboard");
         let arr = [].slice.call(keyboard.children);
+
         arr.forEach(btn => {
             btn.addEventListener("click", evt => {
             msg.value += btn.children[0].innerHTML;
         });
         })
 
-        // Allow user to send message via socket
+        // let lion_emoji = document.querySelector('#lion');
+
+        // lion_emoji.addEventListener("click", evt => {
+        //     console.log(evt, msg.innerHTML, lion_emoji.children[0].innerHTML, lion_emoji.children[0].innerText);
+        //     msg.value += lion_emoji.children[0].innerHTML;
+        // });
 
         form.addEventListener('submit', (event)=>{
             event.preventDefault();
             if(msg.value && name1.value){
-
-                user = name1.value;
-
-                // if (in_global)
-                // {
-                    socket.emit('chat message', {name: name1.value, message: msg.value, room: current_room});
-                    msg.value='';
-                // }
-                // else
-                // {
-                //     socket.to(current_room).emit('chat message', {name: name1.value, message: msg.value})
-                //     msg.value='';
-                // }
+                socket.emit('chat message', {name: name1.value, message: msg.value});
+                msg.value='';
+                // preview.innerHTML = "";
             }
         })
 
-        // Prepare chat rooms
+        // msg.addEventListener("change", evt => {
+        //     preview.innerHTML = msg.value;
+        // });
 
-        let room_buttons = document.querySelector(".room_buttons");
         let rooms = {}
-        createButton("global");
 
-        // Populate list with messages
+        rooms.global = []
+
+        rooms.test = [];
+
+        Object.keys(rooms).forEach(item => {
+            let btn = document.createElement("button");
+            btn.innerText = item;
+            room_buttons.appendChild(btn);
+        });
 
         socket.on('chat message', msg => {
             let chatMessage = document.createElement('li');
 
             chatMessage.addEventListener("dblclick", evt => {
-                let name = "";
-                if (user > msg.from) name = user + " : " + msg.from;
-                else name = msg.from + " : " + user;
-
-                if (!rooms[name])
+                if (!rooms[msg.from])
                 {
-                    createButton(name);
-                    socket.emit("new dm", {room: name, user: user, other: msg.dms});
+                    rooms[msg.from] = [];
+                    let btn = document.createElement("button");
+                    btn.innerText = msg.from;
+                    room_buttons.appendChild(btn);
                 }
             });
 
             let span = document.createElement("span");
             span.innerHTML = msg.content;
             chatMessage.appendChild(span);
+            messages.appendChild(chatMessage);
 
-            if (current_room == msg.room) messages.appendChild(chatMessage);
-
-            rooms[msg.room].push(chatMessage);
+            rooms.global.push(chatMessage);
         })
-
-        socket.on("new roommate", obj => {
-            console.log(obj);
-            if (!rooms[obj.room])
-            {
-                createButton(obj.room);
-                socket.emit("join room", obj.room);
-            }
-        });
-
-        function createButton(rname)
-        {
-            rooms[rname] = [];
-            let btn = document.createElement("button");
-            btn.innerText = rname;
-
-            btn.addEventListener("click", evt => {
-                messages.innerHTML = "";
-                rooms[btn.innerText].forEach(item => messages.appendChild(item));
-                current_room = btn.innerText;
-            });
-
-            room_buttons.appendChild(btn);
-        }
     </script>
 </body>
 </html>
