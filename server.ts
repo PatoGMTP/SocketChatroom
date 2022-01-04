@@ -4,6 +4,8 @@
 import * as test from 'express'
 let app = test();
 
+app.use(test.static(__dirname));
+
 import * as test2 from "http"
 const http = test2.createServer(app)
 

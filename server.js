@@ -3,6 +3,7 @@
 exports.__esModule = true;
 var test = require("express");
 var app = test();
+app.use(test.static(__dirname));
 var test2 = require("http");
 var http = test2.createServer(app);
 var socket_io_1 = require("socket.io");
