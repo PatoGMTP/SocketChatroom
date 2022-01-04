@@ -17,6 +17,11 @@ const port = process.env.PORT || 3000;
 
 let messages: {content: string, from: string, dms: string}[] = [];
 
+// let chats: {messages: {content: string, from: string, dms: string}[], roomname: string} [] = [];
+let chats = {};
+
+chats["global"] = messages;
+
 let users = {};
 
 app.get('/', (req, res) => {
@@ -29,20 +34,34 @@ sock.on('connection', (socket) => {
         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     });
 
+    // chats.forEach(chat => {
+    //     chat.messages.forEach(element => {
+    //         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
+    //     });
+    // });
+
     console.log('a user connected');
     
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
 
-    socket.on("join room", obj => {
+    socket.on("join room", room => 
+    {
+        socket.join(room);
+    });
+
+    socket.on("new dm", obj => {
+        // chats.push({messages: [], roomname: obj.room});
+        chats[obj.room] = [];
+
         console.log(socket.rooms);
         socket.join(obj.room);
         console.log(socket.rooms);
 
         console.log("TEST", obj);
 
-        socket.to(obj.room).emit("new roommate", {user: obj.user});
+        socket.to(obj.other).emit("new roommate", {room: obj.room});
     });
 
     socket.on('chat message', obj => {
@@ -53,14 +72,27 @@ sock.on('connection', (socket) => {
         let message = '';
         message += "Time: " + time + " ; ";
         message += "From: " + users[socket.conn.remoteAddress] + " ; ";
-        // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
 
-        let msg_obj = {content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0]}
+        let msg_obj = {content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room}
 
-        messages.push(msg_obj);
+        if (chats[obj.room])
+        {
+            chats[obj.room].push(msg_obj);
+        }
+        else
+        {
+            chats[obj.room] = [msg_obj];
+        }
 
-        sock.emit('chat message', msg_obj);
+        if (obj.room == "global")
+        {
+            sock.emit('chat message', msg_obj);
+        }
+        else
+        {
+            sock.to(obj.room).emit('chat message', msg_obj);
+        }
     });
 });
 

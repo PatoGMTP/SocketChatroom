@@ -10,6 +10,9 @@ var sock = new socket_io_1.Server();
 sock.attach(http);
 var port = process.env.PORT || 3000;
 var messages = [];
+// let chats: {messages: {content: string, from: string, dms: string}[], roomname: string} [] = [];
+var chats = {};
+chats["global"] = messages;
 var users = {};
 app.get('/', function (req, res) {
     //   res.send('<h1>Hey Socket.io</h1>');
@@ -19,16 +22,26 @@ sock.on('connection', function (socket) {
     messages.forEach(function (element) {
         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     });
+    // chats.forEach(chat => {
+    //     chat.messages.forEach(element => {
+    //         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
+    //     });
+    // });
     console.log('a user connected');
     socket.on('disconnect', function () {
         console.log('user disconnected');
     });
-    socket.on("join room", function (obj) {
+    socket.on("join room", function (room) {
+        socket.join(room);
+    });
+    socket.on("new dm", function (obj) {
+        // chats.push({messages: [], roomname: obj.room});
+        chats[obj.room] = [];
         console.log(socket.rooms);
         socket.join(obj.room);
         console.log(socket.rooms);
         console.log("TEST", obj);
-        socket.to(obj.room).emit("new roommate", { user: obj.user });
+        socket.to(obj.other).emit("new roommate", { room: obj.room });
     });
     socket.on('chat message', function (obj) {
         console.log(obj);
@@ -38,11 +51,20 @@ sock.on('connection', function (socket) {
         var message = '';
         message += "Time: " + time + " ; ";
         message += "From: " + users[socket.conn.remoteAddress] + " ; ";
-        // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
-        var msg_obj = { content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0] };
-        messages.push(msg_obj);
-        sock.emit('chat message', msg_obj);
+        var msg_obj = { content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room };
+        if (chats[obj.room]) {
+            chats[obj.room].push(msg_obj);
+        }
+        else {
+            chats[obj.room] = [msg_obj];
+        }
+        if (obj.room == "global") {
+            sock.emit('chat message', msg_obj);
+        }
+        else {
+            sock.to(obj.room).emit('chat message', msg_obj);
+        }
     });
 });
 http.listen(port, function () {

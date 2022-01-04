@@ -38,8 +38,8 @@
     <script>
         const socket = io();
 
-        let in_global = true;
-        let current_room = "";
+        // let in_global = true;
+        let current_room = "global";
         let user = "";
 
         let messages = document.querySelector('#messages');
@@ -70,16 +70,16 @@
 
                 user = name1.value;
 
-                if (in_global)
-                {
-                    socket.emit('chat message', {name: name1.value, message: msg.value});
+                // if (in_global)
+                // {
+                    socket.emit('chat message', {name: name1.value, message: msg.value, room: current_room});
                     msg.value='';
-                }
-                else
-                {
-                    socket.to(current_room).emit('chat message', {name: name1.value, message: msg.value})
-                    msg.value='';
-                }
+                // }
+                // else
+                // {
+                //     socket.to(current_room).emit('chat message', {name: name1.value, message: msg.value})
+                //     msg.value='';
+                // }
             }
         })
 
@@ -87,12 +87,7 @@
 
         let room_buttons = document.querySelector(".room_buttons");
         let rooms = {}
-        rooms.global = []
-        Object.keys(rooms).forEach(item => {
-            let btn = document.createElement("button");
-            btn.innerText = item;
-            room_buttons.appendChild(btn);
-        });
+        createButton("global");
 
         // Populate list with messages
 
@@ -100,35 +95,49 @@
             let chatMessage = document.createElement('li');
 
             chatMessage.addEventListener("dblclick", evt => {
-                if (!rooms[msg.from])
+                let name = "";
+                if (user > msg.from) name = user + " : " + msg.from;
+                else name = msg.from + " : " + user;
+
+                if (!rooms[name])
                 {
-                    console.log(msg);
-                    rooms[msg.from] = [];
-                    let btn = document.createElement("button");
-                    btn.innerText = msg.from;
-                    room_buttons.appendChild(btn);
-                    socket.emit("join room", {room: msg.dms, user: user});
+                    createButton(name);
+                    socket.emit("new dm", {room: name, user: user, other: msg.dms});
                 }
             });
 
             let span = document.createElement("span");
             span.innerHTML = msg.content;
             chatMessage.appendChild(span);
-            messages.appendChild(chatMessage);
 
-            rooms.global.push(chatMessage);
+            if (current_room == msg.room) messages.appendChild(chatMessage);
+
+            rooms[msg.room].push(chatMessage);
         })
 
         socket.on("new roommate", obj => {
             console.log(obj);
-            if (!rooms[user])
+            if (!rooms[obj.room])
             {
-                rooms[user] = [];
-                let btn = document.createElement("button");
-                btn.innerText = user;
-                room_buttons.appendChild(btn);
+                createButton(obj.room);
+                socket.emit("join room", obj.room);
             }
         });
+
+        function createButton(rname)
+        {
+            rooms[rname] = [];
+            let btn = document.createElement("button");
+            btn.innerText = rname;
+
+            btn.addEventListener("click", evt => {
+                messages.innerHTML = "";
+                rooms[btn.innerText].forEach(item => messages.appendChild(item));
+                current_room = btn.innerText;
+            });
+
+            room_buttons.appendChild(btn);
+        }
     </script>
 </body>
 </html>
