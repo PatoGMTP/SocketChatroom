@@ -15,7 +15,7 @@ sock.attach(http);
 
 const port = process.env.PORT || 3000;
 
-let messages: string[] = [];
+let messages: {content: string, from: string, dms: string}[] = [];
 
 let users = {};
 
@@ -26,13 +26,23 @@ app.get('/', (req, res) => {
 
 sock.on('connection', (socket) => {
     messages.forEach(element => {
-        sock.emit('chat message', `${element}`);
+        sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     });
 
     console.log('a user connected');
     
     socket.on('disconnect', () => {
         console.log('user disconnected');
+    });
+
+    socket.on("join room", obj => {
+        console.log(socket.rooms);
+        socket.join(obj.room);
+        console.log(socket.rooms);
+
+        console.log("TEST", obj);
+
+        socket.to(obj.room).emit("new roommate", {user: obj.user});
     });
 
     socket.on('chat message', obj => {
@@ -45,9 +55,12 @@ sock.on('connection', (socket) => {
         message += "From: " + users[socket.conn.remoteAddress] + " ; ";
         // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
-        messages.push(message);
 
-        sock.emit('chat message', {content: message, from: users[socket.conn.remoteAddress]});
+        let msg_obj = {content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0]}
+
+        messages.push(msg_obj);
+
+        sock.emit('chat message', msg_obj);
     });
 });
 

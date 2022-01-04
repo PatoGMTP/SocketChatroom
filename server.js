@@ -17,11 +17,18 @@ app.get('/', function (req, res) {
 });
 sock.on('connection', function (socket) {
     messages.forEach(function (element) {
-        sock.emit('chat message', "".concat(element));
+        sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     });
     console.log('a user connected');
     socket.on('disconnect', function () {
         console.log('user disconnected');
+    });
+    socket.on("join room", function (obj) {
+        console.log(socket.rooms);
+        socket.join(obj.room);
+        console.log(socket.rooms);
+        console.log("TEST", obj);
+        socket.to(obj.room).emit("new roommate", { user: obj.user });
     });
     socket.on('chat message', function (obj) {
         console.log(obj);
@@ -33,8 +40,9 @@ sock.on('connection', function (socket) {
         message += "From: " + users[socket.conn.remoteAddress] + " ; ";
         // message += "To: " + socket.handshake.headers.host + " ; ";
         message += msg;
-        messages.push(message);
-        sock.emit('chat message', { content: message, from: users[socket.conn.remoteAddress] });
+        var msg_obj = { content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0] };
+        messages.push(msg_obj);
+        sock.emit('chat message', msg_obj);
     });
 });
 http.listen(port, function () {
