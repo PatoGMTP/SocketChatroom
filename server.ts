@@ -15,7 +15,7 @@ let messages: string[] = [];
 
 app.get('/', (req, res) => {
 //   res.send('<h1>Hey Socket.io</h1>');
-  res.send(__dirname + "/index.html/");
+  res.sendFile(__dirname + "/index.html");
 });
 
 sock.on('connection', (socket) => {

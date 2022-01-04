@@ -11,7 +11,7 @@ sock.attach(http);
 var messages = [];
 app.get('/', function (req, res) {
     //   res.send('<h1>Hey Socket.io</h1>');
-    res.send(__dirname + "/index.html/");
+    res.sendFile(__dirname + "/index.html");
 });
 sock.on('connection', function (socket) {
     messages.forEach(function (element) {
