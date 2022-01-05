@@ -129,6 +129,23 @@
             }
         });
 
+        socket.on("refresh", obj => {
+            console.log(obj);
+            createButton(obj.room);
+            rooms[obj.room] = [];
+
+            obj.messages.forEach(item => {
+                let chatMessage = document.createElement('li');
+                let span = document.createElement("span");
+                span.innerHTML = item.content;
+                chatMessage.appendChild(span);
+
+                if (current_room == msg.room) messages.appendChild(chatMessage);
+
+                rooms[obj.room].push(chatMessage);
+            });
+        });
+
         function createButton(rname)
         {
             rooms[rname] = [];

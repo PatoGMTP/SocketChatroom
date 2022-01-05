@@ -23,7 +23,13 @@ sock.on('connection', function (socket) {
     messages.forEach(function (element) {
         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     });
-    // chats.forEach(chat => {
+    Array.from(socket.rooms).forEach(function (room, i) {
+        var hotline = Array.from(socket.rooms)[0];
+        if (i != 0) {
+            sock.to(hotline).emit("refresh", { messages: chats[room], room: room });
+        }
+    });
+    // Object.keys(chats).forEach(chat => {
     //     chat.messages.forEach(element => {
     //         sock.to(Array.from(socket.rooms)[0]).emit('chat message', element);
     //     });
