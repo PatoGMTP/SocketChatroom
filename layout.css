@@ -74,7 +74,7 @@ ul
     flex-flow: column;
     gap: 10px;
 
-    max-height: 500px;
+    height: 500px;
 
     padding: 20px;
     margin: 0;
