@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="styles.css"> -->
 
 </head>
 <body>
@@ -26,7 +25,6 @@
     
         </ul>
     </div>
-    <!-- <br> -->
     <div class="inputarea">
 
 
@@ -55,9 +53,7 @@
         </div>
         <form action="" id="form">
             <div>
-                <!-- <label for="Username:">Username:</label> -->
                 <input type="text" id="name" placeholder="Username" required>
-                <!-- <label for="text:">Text:</label> -->
                 <input type="text" id="message" placeholder="Text" required>
             </div>
 
@@ -72,7 +68,6 @@
     <script>
         const socket = io();
 
-        // let in_global = true;
         let current_room = "global";
         let user = "";
 
@@ -105,16 +100,8 @@
 
                 user = name1.value;
 
-                // if (in_global)
-                // {
-                    socket.emit('chat message', {name: name1.value, message: msg.value, room: current_room});
-                    msg.value='';
-                // }
-                // else
-                // {
-                //     socket.to(current_room).emit('chat message', {name: name1.value, message: msg.value})
-                //     msg.value='';
-                // }
+                socket.emit('chat message', {name: name1.value, message: msg.value, room: current_room});
+                msg.value='';
             }
         })
 
