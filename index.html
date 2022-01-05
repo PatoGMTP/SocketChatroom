@@ -74,6 +74,7 @@
 
         let emojis_button = document.querySelector("#emojis");
         emojis_button.addEventListener("click", evt => {
+            evt.preventDefault();
             keyboard.hidden = !keyboard.hidden;
         });
 
