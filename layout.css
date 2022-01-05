@@ -56,3 +56,78 @@ li:nth-child(odd)
 {
     background-color: rgb(255, 254, 248);
 }
+
+.inputarea{
+    padding: 10px;
+    background-color: lightblue;
+    border-radius: 20px;
+    min-height: 50px;
+}
+
+input[type=text] {
+  margin:0 5px;
+  padding: 10px;
+  font-size:1.0em;
+  border-radius:10px;
+  border:0;
+  box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
+}
+
+input[type=text]:hover {
+  border: solid 2px #1AAB8A;
+}
+
+.emojiBtn, .sendBtn{
+  background:#1AAB8A;
+  color:#fff;
+  border:none;
+  border-radius:20px;
+  position:relative;
+  height:40px;
+  font-size:1.0em;
+  padding:0 1em;
+  cursor:pointer;
+  transition:800ms ease all;
+  outline:none;
+}
+
+.emojiBtn:hover, .sendBtn:hover{
+  background:#fff;
+  color:#1AAB8A;
+}
+
+.emojiBtn:before, .sendBtn:before, .emojiBtn:after, .sendBtn:after {
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  background: #1AAB8A;
+  transition:400ms ease all;
+}
+.emojiBtn:after, .sendBtn:after {
+  right:inherit;
+  top:inherit;
+  left:0;
+  bottom:0;
+}
+.emojiBtn:hover:before, .sendBtn:hover:before, .emojiBtn:hover:after, .sendBtn:hover:after {
+  width:100%;
+  transition:800ms ease all;
+}
+
+.keyboard {
+    margin: 10px 0;
+}
+
+.keyboard button {
+    font-size:20px;
+    border: solid 2px #1AAB8A;
+    border-radius: 50px;
+    background-color:white;
+}
+  
+.keyboard button:hover {
+  background-color:#1AAB8A;
+}
