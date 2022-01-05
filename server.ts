@@ -80,11 +80,11 @@ sock.on('connection', (socket) => {
         let msg = obj.message;
         let time = new Date().toLocaleString();
         let message = '';
-        message += "Time: " + time + " ; ";
-        message += "From: " + users[socket.conn.remoteAddress] + " ; ";
+        // message += "Time: " + time + " ; ";
+        // message += "From: " + users[socket.conn.remoteAddress] + " ; ";
         message += msg;
 
-        let msg_obj = {content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room}
+        let msg_obj = {time: time,content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room}
 
         if (chats[obj.room])
         {

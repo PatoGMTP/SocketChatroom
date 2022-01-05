@@ -56,10 +56,10 @@ sock.on('connection', function (socket) {
         var msg = obj.message;
         var time = new Date().toLocaleString();
         var message = '';
-        message += "Time: " + time + " ; ";
-        message += "From: " + users[socket.conn.remoteAddress] + " ; ";
+        // message += "Time: " + time + " ; ";
+        // message += "From: " + users[socket.conn.remoteAddress] + " ; ";
         message += msg;
-        var msg_obj = { content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room };
+        var msg_obj = { time: time, content: message, from: users[socket.conn.remoteAddress], dms: Array.from(socket.rooms)[0], room: obj.room };
         if (chats[obj.room]) {
             chats[obj.room].push(msg_obj);
         }

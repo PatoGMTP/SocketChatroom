@@ -1,3 +1,10 @@
+*
+{
+    box-sizing: border-box;
+    /* padding: 0;
+    margin: 0; */
+}
+
 body, html
 {
     /* height: 100%; */
@@ -21,7 +28,21 @@ header
 {
     display: flex;
     flex-flow: row;
-    gap: 50px; 
+    gap: 50px;
+    width: 900px;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+form
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+#message
+{
+    width: 500px;
 }
 
 .room_buttons
@@ -38,6 +59,13 @@ ul
     display: flex;
     flex-flow: column;
     gap: 10px;
+
+    background-color: lightblue;
+    border-radius: 25px;
+
+    padding: 20px;
+
+    overflow: scroll;
 }
 
 li
@@ -45,6 +73,32 @@ li
     border-radius: 5px;
     border: 1px solid black;
     padding: 5px;
+
+    display: grid;
+    grid-template-columns: auto 160px;
+    justify-content: space-between;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+li div span
+{
+    max-width: 700px;
+}
+
+li div p
+{
+    margin: 0;
+}
+
+.self
+{
+    color: #1AAB8A;
+}
+
+li div span:first-child
+{
+    font-weight: bolder;
 }
 
 li:nth-child(even)

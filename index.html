@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <h1>Chat App</h1>
+        <h1>Marco Polo</h1>
     
         <div class="room_buttons">
     
@@ -48,12 +48,17 @@
     <br>
     <div class="inputarea">
         <form action="" id="form">
-            <!-- <label for="Username:">Username:</label> -->
-            <input type="text" id="name" placeholder="Username" required>
-            <!-- <label for="text:">Text:</label> -->
-            <input type="text" id="message" placeholder="Text" required>
-            <button id="emojis" class="emojiBtn">&#128512;</button>
-            <button id="send" type="submit" class="sendBtn">Send</button>
+            <div>
+                <!-- <label for="Username:">Username:</label> -->
+                <input type="text" id="name" placeholder="Username" required>
+                <!-- <label for="text:">Text:</label> -->
+                <input type="text" id="message" placeholder="Text" required>
+            </div>
+
+            <div>
+                <button id="emojis" class="emojiBtn">&#128512;</button>
+                <button id="send" type="submit" class="sendBtn">Send</button>
+            </div>
         </form>
     </div>
 
@@ -130,9 +135,26 @@
                 }
             });
 
-            let span = document.createElement("span");
-            span.innerHTML = msg.content;
-            chatMessage.appendChild(span);
+            let div = document.createElement("div");
+
+            let content = document.createElement("p");
+            content.innerHTML = msg.content;
+
+            let username = document.createElement("span");
+            username.innerHTML = msg.from + ": ";
+
+            if (msg.from == user)
+            {
+                username.classList.add("self");
+            }
+
+            let time = document.createElement("span");
+            time.innerHTML = msg.time;
+
+            div.appendChild(username);
+            div.appendChild(content);
+            chatMessage.appendChild(div);
+            chatMessage.appendChild(time);
 
             if (current_room == msg.room) messages.appendChild(chatMessage);
 
@@ -145,6 +167,26 @@
             {
                 createButton(obj.room);
                 socket.emit("join room", obj.room);
+
+                let content = document.createElement("p");
+                content.innerHTML = "Someone created " + obj.room + " and is trying to slide into your DMs!";
+                content.classList.add("self");
+
+                let div = document.createElement("div");
+
+                let username = document.createElement("span");
+                username.innerHTML = "";
+
+                let time = document.createElement("span");
+                time.innerHTML = new Date().toLocaleString();
+
+                let chatMessage = document.createElement('li');
+
+                div.appendChild(username);
+                div.appendChild(content);
+                chatMessage.appendChild(div);
+                chatMessage.appendChild(time);
+                messages.appendChild(chatMessage);
             }
         });
 
@@ -176,6 +218,8 @@
                 rooms[btn.innerText].forEach(item => messages.appendChild(item));
                 current_room = btn.innerText;
             });
+
+            btn.classList.add("sendBtn");
 
             room_buttons.appendChild(btn);
         }
